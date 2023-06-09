@@ -34,7 +34,7 @@ public class UserDaoImpl implements UserDaoIntr {
 	            user = new User();
 	            user.setUserId(resultSet.getInt("userId"));
 	            user.setUserName(resultSet.getString("userName"));
-	            user.setPassword(resultSet.getString("password"));
+	            user.setPassword(resultSet.getString("userPassword"));  // Use "userPassword" instead of "password"
 	        }
 
 	        statement.close();
@@ -44,6 +44,7 @@ public class UserDaoImpl implements UserDaoIntr {
 
 	    return user;
 	}
+
 
 
 	@Override
@@ -111,6 +112,11 @@ public class UserDaoImpl implements UserDaoIntr {
 	        e.printStackTrace();
 	    }
 	}
+
+
+
+
+
 
 
 
