@@ -4,7 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import bean.User;
 import database.DBUtil;
@@ -114,27 +116,76 @@ public class UserDaoImpl implements UserDaoIntr {
 	}
 
 
-
-
-
-
-
-
 	@Override
 	public void deleteUser(int userId) {
-		
-		
+	    // Check if the user exists or not
+	    User check = getUserById(userId);
+
+	    // Asking the user to enter a valid user ID till he doesn't provide a valid id
+	    // Using Recursion
+	    
+	    if (check == null) {
+	    	
+	        System.out.println("User does not exist!");
+	        
+	        // Ask the user to enter a valid ID recursively
+	        Scanner sc = new Scanner(System.in);
+	        System.out.println("Enter a valid user ID: ");
+	        int newId = sc.nextInt();
+	        
+	        deleteUser(newId); // Recursively call the method with the new ID 
+	    }
+	    
+	    else {
+	        String sql = "DELETE FROM users WHERE userId = ? ";
+
+	        try (PreparedStatement statement = conn.prepareStatement(sql)) {
+
+	            statement.setInt(1, userId);
+	            int rowsAffected = statement.executeUpdate();
+	            if (rowsAffected > 0) {
+	                System.out.println("User with ID " + userId + " has been removed.");
+	            } else {
+	                System.out.println("Failed to delete user");
+	            }
+
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+
+	    }
 	}
+
+
 
 	@Override
 	public List<User> getAllUsers() {
-		// TODO Auto-generated method stub
-		return null;
+	    List<User> users = new ArrayList<>();
+
+	    String sql = "SELECT * FROM users";
+
+	    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ResultSet rs = ps.executeQuery();
+
+	        while (rs.next()) {
+	            int userId = rs.getInt("userId");
+	            String userName = rs.getString("userName");
+	            String userPassword = rs.getString("userPassword");
+
+	            User user = new User(userId, userName, userPassword);
+	            users.add(user);
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+
+	    return users;
 	}
+
 
 	@Override
 	public List<User> getUsersWithUnreturnedBooks() {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

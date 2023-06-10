@@ -6,20 +6,23 @@ public class Book {
 	private String bookName;
 	private String date;
 	private String author;
-	
+	private int Count;
 	
 	public Book() {
 		super();
 	}
 
 
-	public Book(int bookId, String bookName, String date, String author) {
+	public Book(int bookId, String bookName, String date, String author, int Count) {
 		super();
 		this.bookId = bookId;
 		this.bookName = bookName;
 		this.date = date;
 		this.author = author;
+		this.Count = Count;
 	}
+	
+
 
 
 	public int getBookId() {
@@ -60,12 +63,21 @@ public class Book {
 	public void setAuthor(String author) {
 		this.author = author;
 	}
+	
+	public int getCount() {
+		return Count;
+	}
+	
+	public void setCount(int Count) {
+		this.Count = Count;
+	}
 
 
 	@Override
 	public String toString() {
-		return "Book [bookId=" + bookId + ", bookName=" + bookName + ", date=" + date + ", author=" + author + "]";
+	    return "Book [bookId=" + bookId + ", bookName=" + bookName + ", date=" + date + ", author=" + author + ", count=" + Count + "]";
 	}
+
 	
 	
 	

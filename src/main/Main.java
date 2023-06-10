@@ -1,80 +1,45 @@
 package main;
 
+import java.awt.print.Book;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 import bean.User;
+import dao.BooksDaoImpl;
+import dao.BooksDaoIntr;
 import dao.UserDaoImpl;
 import dao.UserDaoIntr;
 import exception.UserDaoException;
 
+
 public class Main {
 
 	public static void main(String[] args) {
-		
-		UserDaoIntr dao = new UserDaoImpl();
-		
-		Scanner sc = new Scanner(System.in);
-		
-		System.out.println("******* Welcome to Library Management System *******");
-		System.out.println("Enter your choice : ");
-		
-		
-		// Update a user
-		boolean validOption = false;
 
-		while (!validOption) {
-		    while (true) {
-		        System.out.println("Enter the ID of the user you want to update: ");
-		        int id = sc.nextInt();
+        UserDaoIntr dao = new UserDaoImpl();
+        dao.BooksDaoIntr bookDao = new dao.BooksDaoImpl();
 
-		        // Check if the user exists
-		        User existingUser = dao.getUserById(id);
-		        if (existingUser == null) {
-		            System.out.println("User with ID " + id + " does not exist. Please enter a valid ID.");
-		        } else {
-		            System.out.println("Do you want to update:"
-		                    + "\n1. User name"
-		                    + "\n2. Password");
-		            int property = sc.nextInt();
+        Scanner sc = new Scanner(System.in);
 
-		            // Creating a new user object, setting id, username (password unchanged)
-		            if (property == 1) {
-		                System.out.println("Enter the new user name: ");
-		                String newUserName = sc.next();
+        System.out.println("******* Welcome to Library Management System *******");
+        
+        System.out.println("Enter your choice : ");
 
-		                User user = new User();
-		                user.setUserId(id);
-		                user.setUserName(newUserName);
-
-		                dao.updateUser(user);
-		                validOption = true;
-		                break; // Exit the inner loop
-		            }
-		            // Creating a new user object, setting id, password (username unchanged)
-		            else if (property == 2) {
-		                System.out.println("Enter the new password: ");
-		                String newPassword = sc.next();
-
-		                User user = new User();
-		                user.setUserId(id);
-		                user.setPassword(newPassword);
-
-		                dao.updateUser(user);
-		                validOption = true;
-		                break; // Exit the inner loop
-		            } else {
-		                System.out.println("Please enter a valid option");
-		            }
-		        }
-		    }
-		}
-
-
-	
-		
-
-		
-
-	}
+        System.out.println("Enter book name : ");
+        String bookName = sc.nextLine();
+        
+        System.out.println("Enter author name : ");
+        String author = sc.nextLine();
+        
+        System.out.println("Enter published_year name : ");
+        String published_year = sc.next();
+        
+        System.out.println("Enter the count of books you want to add : ");
+        int count = sc.nextInt();
+        
+        bookDao.addBook(bookName, author, published_year, count);
+        
+    }
 
 }
