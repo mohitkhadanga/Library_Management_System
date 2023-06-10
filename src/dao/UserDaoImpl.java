@@ -10,6 +10,7 @@ import java.util.Scanner;
 
 import bean.User;
 import database.DBUtil;
+import exception.BookDaoException;
 import exception.UserDaoException;
 
 public class UserDaoImpl implements UserDaoIntr {
@@ -18,6 +19,33 @@ public class UserDaoImpl implements UserDaoIntr {
 	
 	public UserDaoImpl () {
 		conn = DBUtil.getConnection();
+	}
+	
+	//User Login
+	public boolean loginUser(String username, String password) {
+		
+		boolean checkLogin; //True or False
+		
+		String sql = "SELECT * FROM users WHERE userName = ? AND userPassword = ?";
+		
+		try(PreparedStatement statement = conn.prepareStatement(sql)) {
+			
+			statement.setString(1, username);
+            statement.setString(2, password);
+			
+           ResultSet resultSet = statement.executeQuery();
+           
+           checkLogin = resultSet.next();
+           
+			return checkLogin;
+		} 
+		
+		catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+		}
+		
+		
 	}
 	
 
@@ -184,9 +212,54 @@ public class UserDaoImpl implements UserDaoIntr {
 
 
 	@Override
-	public List<User> getUsersWithUnreturnedBooks() {
-		
-		return null;
+    public List<User> getUsersWithUnreturnedBooks() throws BookDaoException {
+        List<User> users = new ArrayList<>();
+
+        String sql = "SELECT users.userId, users.userName, users.userPassword " +
+                     "FROM users " +
+                     "INNER JOIN borrow ON users.userId = borrow.uId " +
+                     "INNER JOIN books ON books.bookId = borrow.bId " +
+                     "WHERE books.count > 0";
+
+        try (PreparedStatement ps = conn.prepareStatement(sql)) {
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                int userId = rs.getInt("userId");
+                String username = rs.getString("userName");
+                String password = rs.getString("userPassword");
+
+                User user = new User(userId, username, password);
+                users.add(user);
+            }
+        } catch (SQLException e) {
+            throw new BookDaoException("Error occurred while retrieving users with unreturned books: " + e.getMessage());
+        }
+
+        return users;
+    }
+
+	@Override
+	public int getUserIdByUsernameAndPassword(String username, String password) throws UserDaoException {
+	    int userId = -1;
+
+	    String sql = "SELECT userId FROM users WHERE userName = ? AND userPassword = ?";
+
+	    try (PreparedStatement ps = conn.prepareStatement(sql)) {
+	        ps.setString(1, username);
+	        ps.setString(2, password);
+	        ResultSet rs = ps.executeQuery();
+
+	        if (rs.next()) {
+	            userId = rs.getInt("userId");
+	        }
+	    } catch (SQLException e) {
+	        throw new UserDaoException("Error occurred while retrieving user ID: " + e.getMessage());
+	    }
+
+	    return userId;
 	}
+
+
 
 }
